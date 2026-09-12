@@ -9,6 +9,7 @@ import {
   CircularProgress,
   Container,
   CssBaseline,
+  Snackbar,
   ThemeProvider,
   Typography,
 } from '@mui/material'
@@ -95,8 +96,26 @@ function App() {
           </Box>
 
           {loading && <CircularProgress size={28} />}
-          {error && <Alert severity="error">{error}</Alert>}
-          {success && <Alert severity="success">{success}</Alert>}
+          <Snackbar
+            open={Boolean(error)}
+            autoHideDuration={7000}
+            onClose={() => setError('')}
+            anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
+          >
+            <Alert onClose={() => setError('')} severity="error" variant="filled" sx={{ width: '100%' }}>
+              {error}
+            </Alert>
+          </Snackbar>
+          <Snackbar
+            open={Boolean(success)}
+            autoHideDuration={4000}
+            onClose={() => setSuccess('')}
+            anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
+          >
+            <Alert onClose={() => setSuccess('')} severity="success" variant="filled" sx={{ width: '100%' }}>
+              {success}
+            </Alert>
+          </Snackbar>
 
           {order && (
             <>

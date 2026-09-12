@@ -12,6 +12,7 @@ public class OrderLineResponseDto
 {
     public int Id { get; set; }
     public string Article { get; set; } = string.Empty;
+    public string UnitOfMeasure { get; set; } = string.Empty;
     public decimal OrderedQuantity { get; set; }
     public decimal ReceivedQuantity { get; set; }
     public decimal PendingQuantity { get; set; }

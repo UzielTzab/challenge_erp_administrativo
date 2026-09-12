@@ -49,6 +49,7 @@ public class OrdersController : ControllerBase
                 {
                     Id = line.Id,
                     Article = line.Article,
+                    UnitOfMeasure = line.UnitOfMeasure,
                     OrderedQuantity = line.Quantity,
                     ReceivedQuantity = receivedQuantity,
                     PendingQuantity = pendingQuantity,
@@ -100,7 +101,7 @@ public class OrdersController : ControllerBase
             {
                 return StatusCode(422, new 
                 { 
-                    message = "La recepción excede la tolerancia del 2%.",
+                    message = "La recepción completa fue rechazada porque excede la tolerancia del 2%. No se aplicó ninguna línea.",
                     lineId = line.Id,
                     pendingQuantity = Math.Max(0, line.Quantity - receivedQuantity),
                     maximumAcceptable = maximumAcceptable
@@ -142,6 +143,7 @@ public class OrdersController : ControllerBase
                 {
                     Id = line.Id,
                     Article = line.Article,
+                    UnitOfMeasure = line.UnitOfMeasure,
                     OrderedQuantity = line.Quantity,
                     ReceivedQuantity = receivedQuantity,
                     PendingQuantity = Math.Max(0, line.Quantity - receivedQuantity),

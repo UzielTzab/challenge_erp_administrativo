@@ -16,6 +16,10 @@ public class OrderLine
     [MaxLength(150)]
     public string Article { get; set; } = string.Empty;
 
+    [Required]
+    [MaxLength(10)]
+    public string UnitOfMeasure { get; set; } = string.Empty;
+
     [Column(TypeName = "decimal(18,2)")]
     public decimal Quantity { get; set; }
 

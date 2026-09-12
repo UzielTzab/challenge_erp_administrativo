@@ -1,6 +1,7 @@
 export type OrderLine = {
   id: number
   article: string
+  unitOfMeasure: string
   orderedQuantity: number
   receivedQuantity: number
   pendingQuantity: number
@@ -22,4 +23,6 @@ export type ReceptionLine = {
 export type ApiError = {
   message?: string
   lineId?: number
+  pendingQuantity?: number
+  maximumAcceptable?: number
 }

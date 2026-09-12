@@ -30,9 +30,9 @@ public class AppDbContext : DbContext
         );
 
         modelBuilder.Entity<OrderLine>().HasData(
-            new OrderLine { Id = 1, OrderId = "OC-1001", Article = "Vidrio flotado 6 mm", Quantity = 100m, Price = 180.00m },
-            new OrderLine { Id = 2, OrderId = "OC-1001", Article = "Silicón estructural", Quantity = 40m, Price = 95.00m },
-            new OrderLine { Id = 3, OrderId = "OC-1001", Article = "Perfil de aluminio 3 m", Quantity = 25m, Price = 310.00m }
+            new OrderLine { Id = 1, OrderId = "OC-1001", Article = "Vidrio flotado 6 mm", UnitOfMeasure = "m2", Quantity = 100m, Price = 180.00m },
+            new OrderLine { Id = 2, OrderId = "OC-1001", Article = "Silicón estructural", UnitOfMeasure = "pza", Quantity = 40m, Price = 95.00m },
+            new OrderLine { Id = 3, OrderId = "OC-1001", Article = "Perfil de aluminio 3 m", UnitOfMeasure = "pza", Quantity = 25m, Price = 310.00m }
         );
     }
 }

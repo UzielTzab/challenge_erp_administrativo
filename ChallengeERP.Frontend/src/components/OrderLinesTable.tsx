@@ -12,10 +12,11 @@ export function OrderLinesTable({ order, quantities, submitting, onQuantityChang
   return (
     <Box>
       <TableContainer component={Box} sx={{ overflowX: 'auto' }}>
-        <Table sx={{ minWidth: 760 }}>
+        <Table sx={{ minWidth: 820 }}>
           <TableHead>
             <TableRow>
               <TableCell>Artículo</TableCell>
+              <TableCell>Unidad</TableCell>
               <TableCell align="right">Ordenado</TableCell>
               <TableCell align="right">Recibido</TableCell>
               <TableCell align="right">Pendiente</TableCell>
@@ -30,6 +31,7 @@ export function OrderLinesTable({ order, quantities, submitting, onQuantityChang
                   <Typography sx={{ fontWeight: 700 }}>{line.article}</Typography>
                   <Typography color="text.secondary" variant="caption">Línea {line.id}</Typography>
                 </TableCell>
+                <TableCell>{line.unitOfMeasure}</TableCell>
                 <TableCell align="right">{line.orderedQuantity.toFixed(2)}</TableCell>
                 <TableCell align="right">{line.receivedQuantity.toFixed(2)}</TableCell>
                 <TableCell align="right"><Typography color="primary" sx={{ fontWeight: 700 }}>{line.pendingQuantity.toFixed(2)}</Typography></TableCell>
