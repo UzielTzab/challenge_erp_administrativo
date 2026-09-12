@@ -26,6 +26,3 @@ ChallengeERP.Frontend/dist/
 **/*.log
 **/*.tmp
 
-# Backup of the former backend-only Git repository
-ChallengeErp.Api/.git-backend/
-ChallengeErp.Api.backup/
