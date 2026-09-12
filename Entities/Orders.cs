@@ -1,15 +1,23 @@
-namespace ChallengeErp.Api.Entities;
+using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
-public class Order
-{
-    public string Id { get; set; } = string.Empty;
-    public string Supplier { get; set; } = string.Empty;
-    public OrderStatus Status { get; set; } = OrderStatus.Open;
-    public List<OrderLine> Lines { get; set; } = new List<OrderLine>();
-}
+namespace ChallengeErp.Api.Entities;
 
 public enum OrderStatus
 {
-    Close, 
+    Close,
     Open
+}
+
+public class Order
+{
+    [Key]
+    [MaxLength(20)]
+    public string Id { get; set; } = string.Empty;
+    [Required]
+    [MaxLength(100)]
+    public string Provider { get; set; } = string.Empty;
+
+    public OrderStatus Status { get; set; } = OrderStatus.Open;
+    public List<OrderLine> Lines { get; set; } = new();
 }

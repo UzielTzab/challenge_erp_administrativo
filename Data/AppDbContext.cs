@@ -21,7 +21,7 @@ public class AppDbContext : DbContext
             new Order 
             { 
                 Id = "OC-1001", 
-                Supplier = "Vidrios del Sureste", 
+                Provider = "Vidrios del Sureste", 
                 Status = OrderStatus.Open 
             }
         );
