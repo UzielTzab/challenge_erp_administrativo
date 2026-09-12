@@ -40,13 +40,9 @@ public class OrdersController : ControllerBase
             Status = order.Status.ToString(),
             Lines = order.Lines.Select(line => 
             {
-                // Sumar todas las recepciones registradas para esta línea
+        
                 decimal receivedQuantity = line.Receipts.Sum(receipt => receipt.QuantityReceived);
-                
-                // Calcular el máximo aceptable (Cantidad original * 1.02) a 2 decimales
                 decimal maximumAcceptable = Math.Round(line.Quantity * 1.02m, 2);
-                
-                // Calcular lo pendiente
                 decimal pendingQuantity = Math.Max(0, line.Quantity - receivedQuantity);
 
                 return new OrderLineResponseDto
@@ -67,21 +63,21 @@ public class OrdersController : ControllerBase
     [HttpPost("{id}/recepciones")]
     public async Task<ActionResult<OrderResponseDto>> RegisterReception(string id, [FromBody] ReceptionRequestDto request)
     {
-        // 1. Consultamos la orden por su ID, incluyendo las líneas y sus recepciones
+
         var order = await _context.Orders
             .Include(order => order.Lines)
             .ThenInclude(line => line.Receipts)
             .FirstOrDefaultAsync(order => order.Id == id);
 
-        // 2. Manejar el caso de que la orden no exista
+        // Manejar el caso de que la orden no exista
         if (order == null)
             return NotFound(new { message = $"No se encontró la orden {id}" });
 
-        // REGLA 4: Orden cerrada
+        // Manejar el caso de una orden cerrada
         if (order.Status == OrderStatus.Close)
             return Conflict(new { message = "La orden ya está cerrada y no acepta más recepciones." });
 
-        // REGLA 1: Cantidades válidas y pertenencia
+        // Manejar las cantidades de la línea válidas y pertenencia
         foreach (var reqLine in request.Lines)
         {
             if (reqLine.Quantity <= 0)
@@ -91,13 +87,13 @@ public class OrdersController : ControllerBase
                 return BadRequest(new { message = "La línea no pertenece a esta orden de compra.", lineId = reqLine.OrderLineId });
         }
 
-        // REGLA 2: Tolerancia del 2%
+        // Manejar la Tolerancia del 2%
         foreach (var reqLine in request.Lines)
         {
             var line = order.Lines.First(line => line.Id == reqLine.OrderLineId);
+
             decimal receivedQuantity = line.Receipts.Sum(receipt => receipt.QuantityReceived);
             
-            // Usamos el redondeo a 2 decimales para el máximo aceptable
             decimal maximumAcceptable = Math.Round(line.Quantity * 1.02m, 2, MidpointRounding.AwayFromZero);
             
             if (receivedQuantity + reqLine.Quantity > maximumAcceptable)
@@ -112,7 +108,7 @@ public class OrdersController : ControllerBase
             }
         }
 
-        // 3. APLICAR RECEPCIONES (Si superó todas las validaciones)
+        // APLICAR RECEPCIONES (Si superó todas las validaciones)
         foreach (var reqLine in request.Lines)
         {
             var line = order.Lines.First(line => line.Id == reqLine.OrderLineId);
@@ -123,10 +119,10 @@ public class OrdersController : ControllerBase
             };
             
             _context.Receipts.Add(receipt);
-            line.Receipts.Add(receipt); // Lo agregamos en memoria para evaluar la regla 3
+            line.Receipts.Add(receipt);
         }
 
-        // REGLA 3: Cierre automático
+        // Cierre automático
         bool allLinesCompleted = order.Lines.All(line => line.Receipts.Sum(receipt => receipt.QuantityReceived) >= line.Quantity);
         if (allLinesCompleted)
         {
@@ -135,7 +131,6 @@ public class OrdersController : ControllerBase
 
         await _context.SaveChangesAsync();
 
-        // 4. DEVOLVER LA ORDEN ACTUALIZADA (Reutilizamos la lógica de mapeo)
         var response = new OrderResponseDto
         {
             Id = order.Id,
