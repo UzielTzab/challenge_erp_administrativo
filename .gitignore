@@ -1,0 +1,31 @@
+# .NET build output
+**/bin/
+**/obj/
+
+# Visual Studio, Rider and local editor files
+.vs/
+.idea/
+**/*.user
+**/*.suo
+.vscode/
+
+# Local configuration and secrets
+**/appsettings.Local.json
+**/appsettings.*.Local.json
+
+# SQLite local databases
+**/*.db
+**/*.db-shm
+**/*.db-wal
+
+# Frontend dependencies and build output
+ChallengeERP.Frontend/node_modules/
+ChallengeERP.Frontend/dist/
+
+# Logs and temporary files
+**/*.log
+**/*.tmp
+
+# Backup of the former backend-only Git repository
+ChallengeErp.Api/.git-backend/
+ChallengeErp.Api.backup/
