@@ -118,7 +118,6 @@ public class OrdersController : ControllerBase
                 QuantityReceived = reqLine.Quantity 
             };
             
-            _context.Receipts.Add(receipt);
             line.Receipts.Add(receipt);
         }
 
