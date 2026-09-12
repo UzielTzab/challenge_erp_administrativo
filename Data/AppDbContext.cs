@@ -17,6 +17,11 @@ public class AppDbContext : DbContext
     {
         base.OnModelCreating(modelBuilder);
 
+        modelBuilder.Entity<Order>()
+            .Property(o => o.Status)
+            .HasConversion<string>()
+            .HasMaxLength(30);
+
         modelBuilder.Entity<Order>().HasData(
             new Order 
             { 
