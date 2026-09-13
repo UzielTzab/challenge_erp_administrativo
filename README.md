@@ -12,6 +12,13 @@ API para registrar recepciones contra una orden de compra. Incluye backend .NET,
 dotnet tool install --global dotnet-ef
 ```
 
+## Entregables incluidos
+
+- Código completo de la API en `ChallengeErp.Api/`.
+- Pruebas automatizadas en `ChallengeErp.Tests/`.
+- Frontend opcional en `ChallengeERP.Frontend/`.
+- Migraciones, configuración y solución .NET incluidos en el repositorio.
+
 ## Estructura
 
 ```text
@@ -31,6 +38,7 @@ Ejecuta los siguientes comandos desde la raiz del repositorio.
 dotnet restore .\ChallengeErp.slnx
 cd .\ChallengeERP.Frontend
 npm install
+cd ..
 ```
 
 ### 2. Crear la base SQLite
@@ -57,7 +65,7 @@ Desde `ChallengeErp.Api`:
 dotnet run --launch-profile http
 ```
 
-Puerto de la api API:
+Puerto de la API:
 
 ```text
 http://localhost:5013
@@ -88,11 +96,106 @@ El frontend usa el proxy de Vite para comunicarse con la API en `http://localhos
 
 ## Probar la API
 
-### Consultar la orden
+### 1. Consultar una orden
 
 ```http
 GET http://localhost:5013/ordenes/OC-1001
 ```
+
+PowerShell:
+
+```powershell
+Invoke-RestMethod `
+	-Method Get `
+	-Uri http://localhost:5013/ordenes/OC-1001
+```
+
+Respuesta `200 OK` (resumida; incluye todas las líneas de la orden):
+
+```json
+{
+	"id": "OC-1001",
+	"provider": "Vidrios del Sureste",
+	"status": "Open",
+	"lines": [
+		{
+			"id": 1,
+			"article": "Vidrio flotado 6 mm",
+			"unitOfMeasure": "m2",
+			"orderedQuantity": 100,
+			"receivedQuantity": 0,
+			"pendingQuantity": 100,
+			"maximumAcceptable": 102
+		}
+	]
+}
+```
+
+### 2. Registrar una recepción
+
+URL:
+
+```http
+POST http://localhost:5013/ordenes/OC-1001/recepciones
+Content-Type: application/json
+```
+
+JSON de entrada:
+
+```json
+{
+	"lines": [
+		{
+			"orderLineId": 1,
+			"quantity": 20
+		}
+	]
+}
+```
+
+Escribe este comando en PowerShell para realizar una Recepción; petición POST:
+
+```powershell
+$body = @{
+	lines = @(
+		@{ orderLineId = 1; quantity = 20 }
+	)
+} | ConvertTo-Json -Depth 3
+
+Invoke-RestMethod `
+	-Method Post `
+	-Uri http://localhost:5013/ordenes/OC-1001/recepciones `
+	-ContentType 'application/json' `
+	-Body $body
+```
+
+Respuesta `200 OK` (resumida; incluye todas las líneas de la orden):
+
+```json
+{
+	"id": "OC-1001",
+	"provider": "Vidrios del Sureste",
+	"status": "Open",
+	"lines": [
+		{
+			"id": 1,
+			"article": "Vidrio flotado 6 mm",
+			"unitOfMeasure": "m2",
+			"orderedQuantity": 100,
+			"receivedQuantity": 20,
+			"pendingQuantity": 80,
+			"maximumAcceptable": 102
+		}
+	]
+}
+```
+
+Errores principales del endpoint:
+
+- `400`: cantidad inválida o línea que no pertenece a la orden.
+- `404`: la orden no existe.
+- `409`: la orden ya está cerrada.
+- `422`: la recepción supera la tolerancia del 2%; se rechaza toda la operación.
 
 ## Tabla e información inicial en la base de datos
 
@@ -105,14 +208,13 @@ Linea 3: Perfil de aluminio 3 m| 25 pza | 310.00
 
 ## Ejecutar pruebas
 
-Desde la raiz del repositorio:
+Desde la raiz del repositorio ejecuta:
 
 ```powershell
-cd C:\ruta\al\challenge_erp_administrativo
 dotnet test .\ChallengeErp.Tests\ChallengeErp.Tests.csproj
 ```
 
-Las pruebas cubren recepcion parcial, exceso de tolerancia y cierre automatico. Usan una base InMemory, por lo que no modifican `app.db`.
+Las pruebas cubren recepcion parcial, exceso de tolerancia y cierre automatico. Usan una base InMemory, por lo que no modifican la base de datos principal.
 
 Resultado esperado:
 
