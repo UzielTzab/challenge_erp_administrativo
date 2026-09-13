@@ -56,8 +56,9 @@ function App() {
 
   async function handleRegisterReception() {
     const lines = Object.entries(quantities)
+      .filter(([, quantity]) => quantity.trim() !== '')
+      .filter(([, quantity]) => Number(quantity) !== 0)
       .map(([lineId, quantity]) => ({ orderLineId: Number(lineId), quantity: Number(quantity) }))
-      .filter((line) => line.quantity > 0)
 
     if (lines.length === 0) {
       setError('Captura al menos una cantidad mayor que cero.')

@@ -41,9 +41,9 @@ public class OrdersController : ControllerBase
             Lines = order.Lines.Select(line => 
             {
         
-                decimal receivedQuantity = line.Receipts.Sum(receipt => receipt.QuantityReceived);
-                decimal maximumAcceptable = Math.Round(line.Quantity * 1.02m, 2);
-                decimal pendingQuantity = Math.Max(0, line.Quantity - receivedQuantity);
+                decimal receivedQuantity = RoundQuantity(line.Receipts.Sum(receipt => receipt.QuantityReceived));
+                decimal maximumAcceptable = CalculateMaximumAcceptable(line.Quantity);
+                decimal pendingQuantity = CalculatePendingQuantity(line.Quantity, receivedQuantity);
 
                 return new OrderLineResponseDto
                 {
@@ -93,9 +93,9 @@ public class OrdersController : ControllerBase
         {
             var line = order.Lines.First(line => line.Id == reqLine.OrderLineId);
 
-            decimal receivedQuantity = line.Receipts.Sum(receipt => receipt.QuantityReceived);
+            decimal receivedQuantity = RoundQuantity(line.Receipts.Sum(receipt => receipt.QuantityReceived));
             
-            decimal maximumAcceptable = Math.Round(line.Quantity * 1.02m, 2, MidpointRounding.AwayFromZero);
+            decimal maximumAcceptable = CalculateMaximumAcceptable(line.Quantity);
             
             if (receivedQuantity + reqLine.Quantity > maximumAcceptable)
             {
@@ -103,7 +103,7 @@ public class OrdersController : ControllerBase
                 { 
                     message = "La recepción completa fue rechazada porque excede la tolerancia del 2%. No se aplicó ninguna línea.",
                     lineId = line.Id,
-                    pendingQuantity = Math.Max(0, line.Quantity - receivedQuantity),
+                    pendingQuantity = CalculatePendingQuantity(line.Quantity, receivedQuantity),
                     maximumAcceptable = maximumAcceptable
                 });
             }
@@ -123,7 +123,8 @@ public class OrdersController : ControllerBase
         }
 
         // Cierre automático
-        bool allLinesCompleted = order.Lines.All(line => line.Receipts.Sum(receipt => receipt.QuantityReceived) >= line.Quantity);
+        bool allLinesCompleted = order.Lines.All(line =>
+            RoundQuantity(line.Receipts.Sum(receipt => receipt.QuantityReceived)) >= line.Quantity);
         if (allLinesCompleted)
         {
             order.Status = OrderStatus.Close;
@@ -138,7 +139,7 @@ public class OrdersController : ControllerBase
             Status = order.Status.ToString(),
             Lines = order.Lines.Select(line => 
             {
-                decimal receivedQuantity = line.Receipts.Sum(receipt => receipt.QuantityReceived);
+                decimal receivedQuantity = RoundQuantity(line.Receipts.Sum(receipt => receipt.QuantityReceived));
                 return new OrderLineResponseDto
                 {
                     Id = line.Id,
@@ -146,12 +147,21 @@ public class OrdersController : ControllerBase
                     UnitOfMeasure = line.UnitOfMeasure,
                     OrderedQuantity = line.Quantity,
                     ReceivedQuantity = receivedQuantity,
-                    PendingQuantity = Math.Max(0, line.Quantity - receivedQuantity),
-                    MaximumAcceptable = Math.Round(line.Quantity * 1.02m, 2, MidpointRounding.AwayFromZero)
+                    PendingQuantity = CalculatePendingQuantity(line.Quantity, receivedQuantity),
+                    MaximumAcceptable = CalculateMaximumAcceptable(line.Quantity)
                 };
             }).ToList()
         };
 
         return Ok(response);
     }
+
+    private static decimal RoundQuantity(decimal quantity) =>
+        Math.Round(quantity, 2, MidpointRounding.AwayFromZero);
+
+    private static decimal CalculateMaximumAcceptable(decimal orderedQuantity) =>
+        RoundQuantity(orderedQuantity * 1.02m);
+
+    private static decimal CalculatePendingQuantity(decimal orderedQuantity, decimal receivedQuantity) =>
+        RoundQuantity(Math.Max(0, orderedQuantity - receivedQuantity));
 }

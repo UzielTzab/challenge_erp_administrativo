@@ -22,7 +22,7 @@ export async function registerReception(
       : ''
     const detail = `${apiError.message ?? 'No se pudo registrar la recepción.'}${lineDetail}`
 
-    throw new Error(`${response.status}. ${detail}`)
+    throw new Error(detail)
   }
 
   return await response.json() as Order
