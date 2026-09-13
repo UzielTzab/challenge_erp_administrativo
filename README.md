@@ -1,6 +1,6 @@
 # Challenge ERP Administrativo
 
-API para registrar recepciones contra una orden de compra. Incluye backend .NET, pruebas automatizadas y un frontend opcional en React.
+API para registrar recepciones contra una orden de compra. Incluye backend .NET, pruebas automatizadas y un frontend en React.
 
 ## Requisitos
 
@@ -16,7 +16,7 @@ dotnet tool install --global dotnet-ef
 
 - Código completo de la API en `ChallengeErp.Api/`.
 - Pruebas automatizadas en `ChallengeErp.Tests/`.
-- Frontend opcional en `ChallengeERP.Frontend/`.
+- Frontend en `ChallengeERP.Frontend/`.
 - Migraciones, configuración y solución .NET incluidos en el repositorio.
 
 ## Estructura
