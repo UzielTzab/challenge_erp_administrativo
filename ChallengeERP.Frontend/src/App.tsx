@@ -58,7 +58,7 @@ function App() {
     const lines = Object.entries(quantities)
       .filter(([, quantity]) => quantity.trim() !== '')
       .filter(([, quantity]) => Number(quantity) !== 0)
-      .map(([lineId, quantity]) => ({ orderLineId: Number(lineId), quantity: Number(quantity) }))
+      .map(([lineId, quantity]) => ({ lineId: Number(lineId), quantity: Number(quantity) }))
 
     if (lines.length === 0) {
       setError('Captura al menos una cantidad mayor que cero.')

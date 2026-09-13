@@ -1,4 +1,4 @@
-export type OrderLine = {
+export type Line = {
   id: number
   article: string
   unitOfMeasure: string
@@ -12,11 +12,11 @@ export type Order = {
   id: string
   provider: string
   status: string
-  lines: OrderLine[]
+  lines: Line[]
 }
 
 export type ReceptionLine = {
-  orderLineId: number
+  lineId: number
   quantity: number
 }
 

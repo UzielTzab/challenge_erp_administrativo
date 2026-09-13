@@ -7,6 +7,6 @@ public class ReceptionRequestDto
 
 public class ReceptionLineDto
 {
-    public int OrderLineId { get; set; }
+    public int LineId { get; set; }
     public decimal Quantity { get; set; }
 }

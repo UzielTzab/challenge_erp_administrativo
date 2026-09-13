@@ -21,7 +21,7 @@ public class OrdersController : ControllerBase
     public async Task<ActionResult<OrderResponseDto>> GetOrder(string id)
     {
         // 1. Consultamos la orden por su ID, incluyendo las líneas y sus recepciones
-        var order = await _context.Orders
+        Order? order = await _context.Orders
             .Include(order => order.Lines)
             .ThenInclude(line => line.Receipts)
             .FirstOrDefaultAsync(order => order.Id == id);
@@ -36,7 +36,7 @@ public class OrdersController : ControllerBase
         var response = new OrderResponseDto
         {
             Id = order.Id,
-            Provider = order.Provider,
+            Supplier = order.Supplier,
             Status = order.Status.ToString(),
             Lines = order.Lines.Select(line => 
             {
@@ -49,7 +49,7 @@ public class OrdersController : ControllerBase
                 {
                     Id = line.Id,
                     Article = line.Article,
-                    UnitOfMeasure = line.UnitOfMeasure,
+                    UnitOfMeasure = line.UnitOfMeasure.ToString(),
                     OrderedQuantity = line.Quantity,
                     ReceivedQuantity = receivedQuantity,
                     PendingQuantity = pendingQuantity,
@@ -82,16 +82,16 @@ public class OrdersController : ControllerBase
         foreach (var reqLine in request.Lines)
         {
             if (reqLine.Quantity <= 0)
-                return BadRequest(new { message = "La cantidad a recibir debe ser mayor que cero.", lineId = reqLine.OrderLineId });
+                return BadRequest(new { message = "La cantidad a recibir debe ser mayor que cero.", lineId = reqLine.LineId });
 
-            if (!order.Lines.Any(line => line.Id == reqLine.OrderLineId))
-                return BadRequest(new { message = "La línea no pertenece a esta orden de compra.", lineId = reqLine.OrderLineId });
+            if (!order.Lines.Any(line => line.Id == reqLine.LineId))
+                return BadRequest(new { message = "La línea no pertenece a esta orden de compra.", lineId = reqLine.LineId });
         }
 
         // Manejar la Tolerancia del 2%
         foreach (var reqLine in request.Lines)
         {
-            var line = order.Lines.First(line => line.Id == reqLine.OrderLineId);
+            var line = order.Lines.First(line => line.Id == reqLine.LineId);
 
             decimal receivedQuantity = RoundQuantity(line.Receipts.Sum(receipt => receipt.QuantityReceived));
             
@@ -112,10 +112,10 @@ public class OrdersController : ControllerBase
         // APLICAR RECEPCIONES (Si superó todas las validaciones)
         foreach (var reqLine in request.Lines)
         {
-            var line = order.Lines.First(line => line.Id == reqLine.OrderLineId);
+            var line = order.Lines.First(line => line.Id == reqLine.LineId);
             var receipt = new Receipt 
             { 
-                OrderLineId = reqLine.OrderLineId, 
+                LineId = reqLine.LineId, 
                 QuantityReceived = reqLine.Quantity 
             };
             
@@ -135,7 +135,7 @@ public class OrdersController : ControllerBase
         var response = new OrderResponseDto
         {
             Id = order.Id,
-            Provider = order.Provider,
+            Supplier = order.Supplier,
             Status = order.Status.ToString(),
             Lines = order.Lines.Select(line => 
             {
@@ -144,7 +144,7 @@ public class OrdersController : ControllerBase
                 {
                     Id = line.Id,
                     Article = line.Article,
-                    UnitOfMeasure = line.UnitOfMeasure,
+                    UnitOfMeasure = line.UnitOfMeasure.ToString(),
                     OrderedQuantity = line.Quantity,
                     ReceivedQuantity = receivedQuantity,
                     PendingQuantity = CalculatePendingQuantity(line.Quantity, receivedQuantity),

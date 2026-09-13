@@ -13,11 +13,11 @@ public class Order
 {
     [Key]
     [MaxLength(20)]
-    public string Id { get; set; } = string.Empty;
+    public string Id { get; init; } = string.Empty;
+
     [Required]
-    [MaxLength(100)]
-    public string Provider { get; set; } = string.Empty;
+    public string Supplier { get; set; }
 
     public OrderStatus Status { get; set; } = OrderStatus.Open;
-    public List<OrderLine> Lines { get; set; } = new();
+    public List<Line> Lines { get; set; } = new();
 }

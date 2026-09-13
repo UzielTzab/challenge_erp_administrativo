@@ -17,36 +17,7 @@ namespace ChallengeErp.Api.Migrations
 #pragma warning disable 612, 618
             modelBuilder.HasAnnotation("ProductVersion", "10.0.12");
 
-            modelBuilder.Entity("ChallengeErp.Api.Entities.Order", b =>
-                {
-                    b.Property<string>("Id")
-                        .HasMaxLength(20)
-                        .HasColumnType("TEXT");
-
-                    b.Property<string>("Provider")
-                        .IsRequired()
-                        .HasMaxLength(100)
-                        .HasColumnType("TEXT");
-
-                    b.Property<string>("Status")
-                        .IsRequired()
-                        .HasMaxLength(30)
-                        .HasColumnType("TEXT");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("Orders");
-
-                    b.HasData(
-                        new
-                        {
-                            Id = "OC-1001",
-                            Provider = "Vidrios del Sureste",
-                            Status = "Open"
-                        });
-                });
-
-            modelBuilder.Entity("ChallengeErp.Api.Entities.OrderLine", b =>
+            modelBuilder.Entity("ChallengeErp.Api.Entities.Line", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -77,7 +48,7 @@ namespace ChallengeErp.Api.Migrations
 
                     b.HasIndex("OrderId");
 
-                    b.ToTable("OrderLines");
+                    b.ToTable("Lines");
 
                     b.HasData(
                         new
@@ -87,7 +58,7 @@ namespace ChallengeErp.Api.Migrations
                             OrderId = "OC-1001",
                             Price = 180.00m,
                             Quantity = 100m,
-                            UnitOfMeasure = "m2"
+                            UnitOfMeasure = "M2"
                         },
                         new
                         {
@@ -96,7 +67,7 @@ namespace ChallengeErp.Api.Migrations
                             OrderId = "OC-1001",
                             Price = 95.00m,
                             Quantity = 40m,
-                            UnitOfMeasure = "pza"
+                            UnitOfMeasure = "Pza"
                         },
                         new
                         {
@@ -105,7 +76,35 @@ namespace ChallengeErp.Api.Migrations
                             OrderId = "OC-1001",
                             Price = 310.00m,
                             Quantity = 25m,
-                            UnitOfMeasure = "pza"
+                            UnitOfMeasure = "Pza"
+                        });
+                });
+
+            modelBuilder.Entity("ChallengeErp.Api.Entities.Order", b =>
+                {
+                    b.Property<string>("Id")
+                        .HasMaxLength(20)
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("Status")
+                        .IsRequired()
+                        .HasMaxLength(30)
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("Supplier")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Orders");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = "OC-1001",
+                            Status = "Open",
+                            Supplier = "Vidrios del sureste"
                         });
                 });
 
@@ -115,7 +114,7 @@ namespace ChallengeErp.Api.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("INTEGER");
 
-                    b.Property<int>("OrderLineId")
+                    b.Property<int>("LineId")
                         .HasColumnType("INTEGER");
 
                     b.Property<decimal>("QuantityReceived")
@@ -126,12 +125,12 @@ namespace ChallengeErp.Api.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("OrderLineId");
+                    b.HasIndex("LineId");
 
                     b.ToTable("Receipts");
                 });
 
-            modelBuilder.Entity("ChallengeErp.Api.Entities.OrderLine", b =>
+            modelBuilder.Entity("ChallengeErp.Api.Entities.Line", b =>
                 {
                     b.HasOne("ChallengeErp.Api.Entities.Order", "Order")
                         .WithMany("Lines")
@@ -144,23 +143,23 @@ namespace ChallengeErp.Api.Migrations
 
             modelBuilder.Entity("ChallengeErp.Api.Entities.Receipt", b =>
                 {
-                    b.HasOne("ChallengeErp.Api.Entities.OrderLine", "OrderLine")
+                    b.HasOne("ChallengeErp.Api.Entities.Line", "Line")
                         .WithMany("Receipts")
-                        .HasForeignKey("OrderLineId")
+                        .HasForeignKey("LineId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.Navigation("OrderLine");
+                    b.Navigation("Line");
+                });
+
+            modelBuilder.Entity("ChallengeErp.Api.Entities.Line", b =>
+                {
+                    b.Navigation("Receipts");
                 });
 
             modelBuilder.Entity("ChallengeErp.Api.Entities.Order", b =>
                 {
                     b.Navigation("Lines");
-                });
-
-            modelBuilder.Entity("ChallengeErp.Api.Entities.OrderLine", b =>
-                {
-                    b.Navigation("Receipts");
                 });
 #pragma warning restore 612, 618
         }

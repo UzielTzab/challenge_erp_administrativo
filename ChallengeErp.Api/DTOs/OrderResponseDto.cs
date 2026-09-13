@@ -1,9 +1,11 @@
+using ChallengeErp.Api.Entities;
+
 namespace ChallengeErp.Api.DTOs;
 
 public class OrderResponseDto
 {
     public string Id { get; set; } = string.Empty;
-    public string Provider { get; set; } = string.Empty;
+    public string Supplier { get; set; } = string.Empty;
     public string Status { get; set; } = string.Empty;
     public List<OrderLineResponseDto> Lines { get; set; } = new();
 }

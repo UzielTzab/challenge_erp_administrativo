@@ -18,7 +18,7 @@ namespace ChallengeErp.Api.Migrations
                 columns: table => new
                 {
                     Id = table.Column<string>(type: "TEXT", maxLength: 20, nullable: false),
-                    Provider = table.Column<string>(type: "TEXT", maxLength: 100, nullable: false),
+                    Supplier = table.Column<string>(type: "TEXT", nullable: false),
                     Status = table.Column<string>(type: "TEXT", maxLength: 30, nullable: false)
                 },
                 constraints: table =>
@@ -27,21 +27,22 @@ namespace ChallengeErp.Api.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "OrderLines",
+                name: "Lines",
                 columns: table => new
                 {
                     Id = table.Column<int>(type: "INTEGER", nullable: false)
                         .Annotation("Sqlite:Autoincrement", true),
                     OrderId = table.Column<string>(type: "TEXT", maxLength: 20, nullable: false),
                     Article = table.Column<string>(type: "TEXT", maxLength: 150, nullable: false),
+                    UnitOfMeasure = table.Column<string>(type: "TEXT", maxLength: 10, nullable: false),
                     Quantity = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
                     Price = table.Column<decimal>(type: "decimal(18,2)", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_OrderLines", x => x.Id);
+                    table.PrimaryKey("PK_Lines", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_OrderLines_Orders_OrderId",
+                        name: "FK_Lines_Orders_OrderId",
                         column: x => x.OrderId,
                         principalTable: "Orders",
                         principalColumn: "Id",
@@ -54,7 +55,7 @@ namespace ChallengeErp.Api.Migrations
                 {
                     Id = table.Column<int>(type: "INTEGER", nullable: false)
                         .Annotation("Sqlite:Autoincrement", true),
-                    OrderLineId = table.Column<int>(type: "INTEGER", nullable: false),
+                    LineId = table.Column<int>(type: "INTEGER", nullable: false),
                     QuantityReceived = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
                     ReceivedAt = table.Column<DateTime>(type: "TEXT", nullable: false)
                 },
@@ -62,37 +63,37 @@ namespace ChallengeErp.Api.Migrations
                 {
                     table.PrimaryKey("PK_Receipts", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_Receipts_OrderLines_OrderLineId",
-                        column: x => x.OrderLineId,
-                        principalTable: "OrderLines",
+                        name: "FK_Receipts_Lines_LineId",
+                        column: x => x.LineId,
+                        principalTable: "Lines",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.InsertData(
                 table: "Orders",
-                columns: new[] { "Id", "Provider", "Status" },
-                values: new object[] { "OC-1001", "Vidrios del Sureste", "Open" });
+                columns: new[] { "Id", "Status", "Supplier" },
+                values: new object[] { "OC-1001", "Open", "Vidrios del sureste" });
 
             migrationBuilder.InsertData(
-                table: "OrderLines",
-                columns: new[] { "Id", "Article", "OrderId", "Price", "Quantity" },
+                table: "Lines",
+                columns: new[] { "Id", "Article", "OrderId", "Price", "Quantity", "UnitOfMeasure" },
                 values: new object[,]
                 {
-                    { 1, "Vidrio flotado 6 mm", "OC-1001", 180.00m, 100m },
-                    { 2, "Silicón estructural", "OC-1001", 95.00m, 40m },
-                    { 3, "Perfil de aluminio 3 m", "OC-1001", 310.00m, 25m }
+                    { 1, "Vidrio flotado 6 mm", "OC-1001", 180.00m, 100m, "M2" },
+                    { 2, "Silicón estructural", "OC-1001", 95.00m, 40m, "Pza" },
+                    { 3, "Perfil de aluminio 3 m", "OC-1001", 310.00m, 25m, "Pza" }
                 });
 
             migrationBuilder.CreateIndex(
-                name: "IX_OrderLines_OrderId",
-                table: "OrderLines",
+                name: "IX_Lines_OrderId",
+                table: "Lines",
                 column: "OrderId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Receipts_OrderLineId",
+                name: "IX_Receipts_LineId",
                 table: "Receipts",
-                column: "OrderLineId");
+                column: "LineId");
         }
 
         /// <inheritdoc />
@@ -102,7 +103,7 @@ namespace ChallengeErp.Api.Migrations
                 name: "Receipts");
 
             migrationBuilder.DropTable(
-                name: "OrderLines");
+                name: "Lines");
 
             migrationBuilder.DropTable(
                 name: "Orders");

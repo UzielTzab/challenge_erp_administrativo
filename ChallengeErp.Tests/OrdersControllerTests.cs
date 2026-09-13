@@ -1,4 +1,4 @@
-﻿using ChallengeErp.Api.Controllers;
+using ChallengeErp.Api.Controllers;
 using ChallengeErp.Api.Data;
 using ChallengeErp.Api.DTOs;
 using Microsoft.AspNetCore.Mvc;
@@ -16,6 +16,8 @@ public class OrdersControllerTests
 
         var context = new AppDbContext(options);
         context.Database.EnsureCreated(); 
+        context.ChangeTracker.Clear(); 
+        
         return context;
     }
 
@@ -29,7 +31,7 @@ public class OrdersControllerTests
             Lines = new List<ReceptionLineDto>
             {
                 // Pedimos 100 de vidrio (Id 1), recibiremos 50
-                new ReceptionLineDto { OrderLineId = 1, Quantity = 50 } 
+                new ReceptionLineDto { LineId = 1, Quantity = 50 } 
             }
         };
 
@@ -54,7 +56,7 @@ public class OrdersControllerTests
             Lines = new List<ReceptionLineDto>
             {
                 // Pedimos 40 de silicón (Id 2). Su máximo al 2% es 40.80. Intentamos recibir 45.
-                new ReceptionLineDto { OrderLineId = 2, Quantity = 45 } 
+                new ReceptionLineDto { LineId = 2, Quantity = 45 } 
             }
         };
 
@@ -73,9 +75,10 @@ public class OrdersControllerTests
         {
             Lines = new List<ReceptionLineDto>
             {
-                new ReceptionLineDto { OrderLineId = 1, Quantity = 100 },
-                new ReceptionLineDto { OrderLineId = 2, Quantity = 40 },
-                new ReceptionLineDto { OrderLineId = 3, Quantity = 25 }
+                // Completamos las tres líneas para verificar el cierre automático de la orden.
+                new ReceptionLineDto { LineId = 1, Quantity = 100 },
+                new ReceptionLineDto { LineId = 2, Quantity = 40 },
+                new ReceptionLineDto { LineId = 3, Quantity = 25 }
             }
         };
 

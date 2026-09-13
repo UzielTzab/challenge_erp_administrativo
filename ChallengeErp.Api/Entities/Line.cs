@@ -3,14 +3,20 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace ChallengeErp.Api.Entities;
 
-public class OrderLine
+public enum OrderUnitOfMeasure
+{
+    M2,
+    Pza
+}
+
+public class Line
 {
     [Key]
-    public int Id { get; set; }
+    public int Id { get; init; }
 
     [Required]
     [MaxLength(20)]
-    public string OrderId { get; set; } = string.Empty;
+    public string OrderId { get; init; } = string.Empty;
 
     [Required]
     [MaxLength(150)]
@@ -18,7 +24,7 @@ public class OrderLine
 
     [Required]
     [MaxLength(10)]
-    public string UnitOfMeasure { get; set; } = string.Empty;
+    public OrderUnitOfMeasure UnitOfMeasure { get; set; }
 
     [Column(TypeName = "decimal(18,2)")]
     public decimal Quantity { get; set; }
