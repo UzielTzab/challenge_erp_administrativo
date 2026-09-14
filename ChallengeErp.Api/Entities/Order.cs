@@ -16,7 +16,7 @@ public class Order
     public string Id { get; init; } = string.Empty;
 
     [Required]
-    public string Supplier { get; set; }
+    public string Supplier { get; set; } = string.Empty;
 
     public OrderStatus Status { get; set; } = OrderStatus.Open;
     public List<Line> Lines { get; set; } = new();
