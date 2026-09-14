@@ -146,7 +146,7 @@ JSON de entrada:
 {
 	"lines": [
 		{
-			"LineId": 1,
+			"lineId": 1,
 			"quantity": 20
 		}
 	]
@@ -158,7 +158,7 @@ Escribe este comando en PowerShell para realizar una Recepción; petición POST:
 ```powershell
 $body = @{
 	lines = @(
-		@{ LineId = 1; quantity = 20 }
+		@{ lineId = 1; quantity = 20 }
 	)
 } | ConvertTo-Json -Depth 3
 
